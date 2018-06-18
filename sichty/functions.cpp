@@ -55,8 +55,13 @@ void create_xls(short month, int year, wstring name) {
 	
 		for (short i = 1; i <= ((2 * pages) + add); i = (i + 2)) {
 
-			page = to_wstring(i) + L"-" + to_wstring(i + 1);
-			
+			if (i == (2 * pages) + add) {
+				page = to_wstring(i);
+			}
+			else {
+				page = to_wstring(i) + L"-" + to_wstring(i + 1);
+			}
+
 			Sheet *sheet = book->addSheet(page.c_str());
 		
 		}
