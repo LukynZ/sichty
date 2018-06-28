@@ -1,9 +1,5 @@
 using namespace std;
 
-void create_xls(short,int,wstring);
-int inputparms(wstring);
-wstring inputwstrparms(wstring);
-
 bool entry() {
 	wstring answer;
 	
@@ -37,8 +33,32 @@ void start() {
 		name = inputwstrparms(L"Zadejte vaše celé jméno: ");
 	} while (name == L"");
 
-	create_xls(month, year, name);
+	create_xls timesheet(month, year, name);
 
+}
+
+int inputparms(wstring question) {
+	short num;
+	wstring helper;
+
+	wcout << question;
+	getline(wcin, helper);
+	wstringstream myStream(helper);
+	if (myStream >> num) {
+		return num;
+	}
+	else {
+		return 0;
+	}
+}
+
+wstring inputwstrparms(wstring question) {
+	wstring answer;
+
+	wcout << question;
+	getline(wcin, answer);
+
+	return answer;
 }
 
 void continuing() {
