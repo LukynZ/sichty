@@ -27,10 +27,13 @@ public:
 
 		if (book) {
 
+			unsigned short next{ 24 };
+
 			for (short i {1}; i <= ((2 * pages) + add); i = (i + 2)) {
 
 				if (i == (2 * pages) + add) {
 					page = to_wstring(i);
+					next = 0;
 				}
 				else {
 					page = to_wstring(i) + L"-" + to_wstring(i + 1);
@@ -38,9 +41,9 @@ public:
 
 				sheet = book->addSheet(page.c_str());
 
-				this->layout();
-				this->set_formating();
-				this->fill_main_text();
+				this->layout(next);
+				this->set_formating(next);
+				this->fill_main_text(next);
 				}
 
 			if (book->save(file.c_str())) {
@@ -57,15 +60,18 @@ public:
 		book->release();
 	}
 
-	void set_formating() {
-		
+	void set_formating(unsigned short next) {
+
+		// rows / cols
+
+		// 21-23 / A-J
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
+			this->basefont(format);
 			format->setBorder(BORDERSTYLE_MEDIUM);
 
-			for (unsigned short x{ 0 }; x <= 24; x += 24) {
-
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
 				for (unsigned short i{ 21 }; i <= 23; i++) {
 					for (unsigned short y{ 0 }; y <= 9; y++) {
 						sheet->setCellFormat(i + x, y, format);
@@ -74,13 +80,29 @@ public:
 			}
 		}
 		
+		// 7-20 / A
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
+			this->datafont(format);
+			format->setBorder(BORDERSTYLE_MEDIUM);
+			format->setRotation(90);
+
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
+				for (unsigned short i{ 7 }; i <= 20; i++) {
+					sheet->setCellFormat(i + x, 0, format);
+				}
+			}
+		}
+
+		// 7-20 / B-G
+		{
+			Format* format = book->addFormat();
+			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
+			this->datafont(format);
 			format->setBorder(BORDERSTYLE_THIN);
 
-			for (unsigned short x{ 0 }; x <= 24; x += 24) {
-
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
 				for (unsigned short i{ 7 }; i <= 20; i++) {
 					for (unsigned short y{ 1 }; y <= 6; y++) {
 						sheet->setCellFormat(i + x, y, format);
@@ -89,13 +111,14 @@ public:
 			}
 		}
 
+		// 7-20 / H-J
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
 			this->border(BORDERSTYLE_THIN, BORDERSTYLE_THIN, BORDERSTYLE_MEDIUM, BORDERSTYLE_MEDIUM, format);
+			this->datafont(format);
 
-			for (unsigned short x{ 0 }; x <= 24; x += 24) {
-
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
 				for (unsigned short i{ 7 }; i <= 20; i++) {
 					for (unsigned short y{ 7 }; y <= 9; y++) {
 						sheet->setCellFormat(i + x, y, format);
@@ -104,13 +127,14 @@ public:
 			}
 		}
 
+		// 5-6 / D-I
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
 			this->border(BORDERSTYLE_MEDIUM, BORDERSTYLE_MEDIUM, BORDERSTYLE_THIN, BORDERSTYLE_THIN, format);
+			this->basefont(format);
 
-			for (unsigned short x{ 0 }; x <= 24; x += 24) {
-
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
 				for (unsigned short i{ 5 }; i <= 6; i++) {
 					for (unsigned short y{ 3 }; y <= 8; y++) {
 						sheet->setCellFormat(i + x, y, format);
@@ -119,46 +143,55 @@ public:
 			}
 		}
 
-
+		// 5-6 / A
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
 			this->border(BORDERSTYLE_MEDIUM, BORDERSTYLE_MEDIUM, BORDERSTYLE_MEDIUM, BORDERSTYLE_THIN, format);
+			this->basefont(format);
 			format->setWrap(true);
-			this->setformat(6, 0, format);
-			this->setformat(5, 0, format);
+			this->setformat(6, 0, format, next);
+			this->setformat(5, 0, format, next);
 		}
 			
+		// 5-6 / J
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
 			this->border(BORDERSTYLE_MEDIUM, BORDERSTYLE_MEDIUM, BORDERSTYLE_THIN, BORDERSTYLE_MEDIUM, format);
-			this->setformat(6, 9, format);
-			this->setformat(5, 9, format);
+			this->basefont(format);
+			this->setformat(5, 9, format, next);
+			this->setformat(6, 9, format, next);
 		}
 
+		// 5 / B-C
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
 			this->border(BORDERSTYLE_MEDIUM, BORDERSTYLE_THIN, BORDERSTYLE_THIN, BORDERSTYLE_THIN, format);
-			this->setformat(5, 1, format);
-			this->setformat(5, 2, format);
+			this->basefont(format);
+			this->setformat(5, 1, format, next);
+			this->setformat(5, 2, format, next);
 		}
 
+		// 6 / B-C
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
 			this->border(BORDERSTYLE_THIN, BORDERSTYLE_MEDIUM, BORDERSTYLE_THIN, BORDERSTYLE_THIN, format);
-			this->setformat(6, 1, format);
-			this->setformat(6, 2, format);
+			this->basefont(format);
+			this->setformat(6, 1, format, next);
+			this->setformat(6, 2, format, next);
 		}
 
+		// 1-4 / A-B
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_RIGHT, ALIGNV_CENTER, format);
+			this->basefont(format);
 			format->setBorder(BORDERSTYLE_MEDIUM);
 
-			for (unsigned short x{ 0 }; x <= 24; x += 24) {
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
 				for (unsigned short i{ 1 }; i <= 4; i++) {
 					for (unsigned short y{ 0 }; y <= 1; y++) {
 						sheet->setCellFormat(i + x, y, format);
@@ -167,15 +200,46 @@ public:
 			}
 		}
 
+		// 1-4 / C-J
 		{
 			Format* format = book->addFormat();
 			this->align(ALIGNH_LEFT, ALIGNV_TOP, format);
+			this->basefont(format);
 			format->setBorder(BORDERSTYLE_MEDIUM);
 
-			for (unsigned short x{ 0 }; x <= 24; x += 24) {
-
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
 				for (unsigned short i{ 1 }; i <= 4; i++) {
 					for (unsigned short y{ 2 }; y <= 9; y++) {
+						sheet->setCellFormat(i + x, y, format);
+					}
+				}
+			}
+		}
+
+		// 21-23 / A
+		{
+			Format* format = book->addFormat();
+			this->align(ALIGNH_LEFT, ALIGNV_CENTER, format);
+			this->basefont(format);
+			format->setBorder(BORDERSTYLE_MEDIUM);	
+
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
+				for (unsigned short i{ 21 }; i <= 23; i++) {
+					sheet->setCellFormat(i + x, 0, format);
+				}
+			}
+		}
+
+		// 21-22 / E-G
+		{
+			Format* format = book->addFormat();
+			this->align(ALIGNH_RIGHT, ALIGNV_CENTER, format);
+			this->basefont(format);
+			format->setBorder(BORDERSTYLE_MEDIUM);
+
+			for (unsigned short x{ 0 }; x <= next; x += 24) {
+				for (unsigned short i{ 21 }; i <= 22; i++) {
+					for (unsigned short y{ 4 }; y <= 6; y++) {
 						sheet->setCellFormat(i + x, y, format);
 					}
 				}
@@ -196,12 +260,26 @@ public:
 		format->setBorderRight(styleR);
 	}
 
-	void setformat(unsigned short row, unsigned short col, Format * format) {
+	void setformat(unsigned short row, unsigned short col, Format * format, unsigned short next) {
 		sheet->setCellFormat(row, col, format);
-		sheet->setCellFormat(row + 24, col, format);
+		sheet->setCellFormat(row + next, col, format);
 	}
 
-	void layout() {
+	void basefont(Format * format) {
+		Font * font = book->addFont();
+		font->setName(L"Calibri");
+		font->setSize(11);
+		format->setFont(font);
+	}
+
+	void datafont(Format * format) {
+		Font * font = book->addFont();
+		font->setName(L"Calibri");
+		font->setSize(9);
+		format->setFont(font);
+	}
+
+	void layout(unsigned short next) {
 		sheet->setDisplayGridlines(true);
 
 		array<double,10> width { 10.71, 6, 5.57, 6.57, 4, 7.71, 4.29, 8.57, 8.57, 28.71 };
@@ -212,7 +290,7 @@ public:
 		}
 
 		// setting row height - rows 1-4 + bottom
-		for (unsigned short x{ 0 }; x <= 24; x += 24) {
+		for (unsigned short x{ 0 }; x <= next; x += 24) {
 			for (unsigned short i{ 0 }; i <= 4; i++) {
 				sheet->setRow(i+x, 15);
 			}
@@ -227,14 +305,14 @@ public:
 		sheet->setRow(30, 15);
 
 		// setting row height - rows 7-23 + bottom
-		for (unsigned short x{ 0 }; x <= 24; x += 24) {
+		for (unsigned short x{ 0 }; x <= next; x += 24) {
 			for (unsigned short i{ 7 }; i <= 23; i++) {
 				sheet->setRow(i+x, 18);
 			}
 		}
 
 		//merging base than + bottom table (+x)
-		for (unsigned int x{ 0 }; x <= 24; x += 24) {
+		for (unsigned int x{ 0 }; x <= next; x += 24) {
 
 			// merging 1-3 + H-J
 			sheet->setMerge(1 + x, 3 + x, 7, 9);
@@ -286,9 +364,9 @@ public:
 		}
 	}
 
-	void fill_main_text() {
+	void fill_main_text(unsigned short next) {
 
-		for (unsigned short x{ 0 }; x <= 24; x += 24) {
+		for (unsigned short x{ 0 }; x <= next; x += 24) {
 			sheet->writeStr(1 + x, 0, L"Jméno a pøíjmení:  ");
 			sheet->writeStr(1 + x, 7, L"Poznámky:");
 			sheet->writeStr(2 + x, 0, L"Datum:  ");
@@ -305,9 +383,9 @@ public:
 			sheet->writeStr(5 + x, 6, L"Ø/S");
 			sheet->writeStr(5 + x, 7, L"Popis pracovní èinnosti");
 			sheet->writeStr(21 + x, 0, L"Hodiny celkem:");
-			sheet->writeStr(21 + x, 4, L"Kontroloval:");
+			sheet->writeStr(21 + x, 4, L"Kontroloval:  ");
 			sheet->writeStr(22 + x, 0, L"Pøestávky:");
-			sheet->writeStr(22 + x, 4, L"Datum: ");
+			sheet->writeStr(22 + x, 4, L"Datum:  ");
 			sheet->writeStr(23 + x, 0, L"Èistá odpracovaná doba:");
 		}
 
