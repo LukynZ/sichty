@@ -1,10 +1,11 @@
-using namespace std;
+#include "stdafx.h"
+#include <iostream>
+#include <string>
+#include <sstream>
+#include "create_xls.h"
+#include "main_functions.h"
 
-bool entry();
-void start();
-void continuing();
-int inputparms(wstring);
-wstring inputwstrparms(wstring);
+using namespace std;
 
 bool entry() {
 	wstring answer;

@@ -1,6 +1,9 @@
+#include "stdafx.h"
 #include <iostream>
 #include <string>
+#include <array>
 #include "create_xls.h"
+#include "main_functions.h"
 
 
 using namespace libxl;
@@ -471,7 +474,7 @@ void create_xls::fill_data(unsigned short next) {
 
 	start = 7 + next;
 
-	std::wcout << L"Zadávejte èasové ùdaje bez dvojteèky!" << endl;
+	std::wcout << L"Zadávejte èasové ùdaje bez dvojteèky!" << std::endl;
 
 	for (unsigned short i{ start }; i <= (20 + next); i++) {
 		target = false;
@@ -605,7 +608,7 @@ void create_xls::fill_data(unsigned short next) {
 }
 
 std::wstring create_xls::convert_time(unsigned int time) {
-	std::wstring string_time{ to_wstring(time) };
+	std::wstring string_time{ std::to_wstring(time) };
 	if (string_time.size() == 4) {
 		string_time.insert(2, L":");
 	}

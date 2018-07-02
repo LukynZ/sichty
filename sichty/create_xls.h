@@ -1,6 +1,8 @@
 #ifndef CREATE_XLS_H
 #define CREATE_XLS_H
 
+#include "libxl.h"
+
 class create_xls {
 	
 	libxl::Book * book;
