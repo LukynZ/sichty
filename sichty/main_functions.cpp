@@ -11,10 +11,10 @@ bool entry() {
 	wstring answer;
 	
 	do {
-		answer = inputwstrparms(L"Chcete vytvoøit tabulku pro nový mìsíc? (a/n): ");
-	} while (answer != L"a" && answer != L"n");
+		answer = inputwstrparms(L"Chcete vytvoøit tabulku pro nový mìsíc? (A/n): ");
+	} while (answer != L"a" && answer != L"n" && answer != L"");
 	
-	if (answer == L"a") {
+	if (answer == L"a" || answer == L"") {
 		return true;
 	}
 	else {

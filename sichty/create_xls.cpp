@@ -50,10 +50,10 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 
 			for (unsigned short x{ i }, y{ 0 }; x <= (i + 1) && x <= ((2 * pages) + add) && fill_next == true; x++, y += 24) {
 				do {
-					answer = inputwstrparms(L"Chcete pøidat záznam pro: " + std::to_wstring(x) + L"." + date_m_y + L"? (a/n/nv) *nv = ne vse: ");
-				} while (answer != L"a" && answer != L"n" && answer != L"nv");
+					answer = inputwstrparms(L"Chcete pøidat záznam pro: " + std::to_wstring(x) + L"." + date_m_y + L"? (A/n/nv) *nv = ne vse: ");
+				} while (answer != L"a" && answer != L"n" && answer != L"nv" && answer != L"");
 
-				if (answer == L"a") {
+				if (answer == L"a" || answer == L"") {
 					this->fill_data(y);
 				}
 				else if (answer == L"nv") {
@@ -463,8 +463,8 @@ void create_xls::fill_main_text(unsigned short next, std::wstring name, unsigned
 void create_xls::fill_data(unsigned short next) {
 
 	unsigned int num_input_from;
-	unsigned int num_input_to;
-	unsigned int time;
+	unsigned int num_input_to{ 700 };
+	unsigned int pause_time;
 	unsigned short start;
 	std::wstring input;
 	std::wstring spz;
@@ -477,15 +477,23 @@ void create_xls::fill_data(unsigned short next) {
 	std::wcout << L"Zadávejte èasové ùdaje bez dvojteèky!" << std::endl;
 
 	for (unsigned short i{ start }; i <= (20 + next); i++) {
+
 		target = false;
+		pause_time = 0;
+
 		for (unsigned short x{ 1 }; x <= 4; x++) {
 
 			switch (x) {
 
 			case 1:
 				do {
-					num_input_from = inputparms(L"Zadejte èas OD: ");
-				} while (num_input_from < 0 || num_input_from > 2400);
+					num_input_from = inputparms(L"Zadejte èas OD (default " + std::to_wstring(num_input_to) + L"): ");
+				} while ((num_input_from < 0 || num_input_from > 2400) || num_input_from != NULL);
+
+				if (num_input_from == NULL) {
+					num_input_from = num_input_to;
+				}
+
 				input = this->convert_time(num_input_from);
 				sheet->writeStr(i, 1, input.c_str());
 				break;
@@ -498,22 +506,24 @@ void create_xls::fill_data(unsigned short next) {
 				input = this->convert_time(num_input_to);
 				sheet->writeStr(i, 2, input.c_str());
 
-				time = num_input_to - num_input_from;
-				input = this->convert_time(time);
-				sheet->writeStr(i, 3, input.c_str());
+				input = L"=C" + std::to_wstring(i+1) + L"-B" + std::to_wstring(i+1);
+				sheet->writeFormula(i, 3, input.c_str());
 
 				break;
 
 			case 3:
 				do {
-					input = inputwstrparms(L"Zemì D/CZ/PL? (d/c/p): ");
-				}  while (input != L"d" && input != L"c" && input != L"p");
+					input = inputwstrparms(L"Zemì D/CZ/PL/A? (D/c/p/a): ");
+				}  while (input != L"d" && input != L"c" && input != L"p" && input != L"a" && input != L"");
 				
-				if (input == L"d") {
+				if (input == L"d" || input == L"") {
 					input = L"D";
 				}
 				else if (input == L"c") {
 					input = L"CZ";
+				}
+				else if (input == L"a") {
+					input = L"A";
 				}
 				else {
 					input = L"PL";
@@ -524,17 +534,17 @@ void create_xls::fill_data(unsigned short next) {
 
 			case 4:
 				do {
-					input = inputwstrparms(L"Èinnost? (c)esta, (s)wap, (p)øíprava, (z)aèištìní, s(u)rwey, (t)ickets, (d)okumentace, (a)dministrativa: ");
-				} while (input != L"c" && input != L"s" && input != L"p" && input != L"z" && input != L"u" && input != L"t" && input != L"d" && input != L"a");
+					input = inputwstrparms(L"Èinnost? (C)esta, (s)wap, (p)øíprava, (z)aèištìní, s(u)rwey, (t)ickets, (d)okumentace, (a)dministrativa: ");
+				} while (input != L"c" && input != L"s" && input != L"p" && input != L"z" && input != L"u" && input != L"t" && input != L"d" && input != L"a" && input != L"");
 
-				if (input == L"c") {
+				if (input == L"c" || input == L"") {
 					activity = L"-> ";
 					if (spz != L"") {
 						do {
-							input = inputwstrparms(L"SPZ vozidla je " + spz + L"? (a/n) ");
-						} while (input != L"a" && input != L"n");
+							input = inputwstrparms(L"SPZ vozidla je " + spz + L"? (A/n) ");
+						} while (input != L"a" && input != L"n" && input != L"");
 
-						if (input == L"a") {
+						if (input == L"a" || input == L"") {
 							sheet->writeStr(i, 5, spz.c_str());
 						}
 						else {
@@ -552,34 +562,56 @@ void create_xls::fill_data(unsigned short next) {
 					}
 
 					do {
-						input = inputwstrparms(L"Øidiè nebo spolujezdec? (r/s): ");
-					} while (input != L"r" && input != L"s");
+						input = inputwstrparms(L"Øidiè nebo spolujezdec? (R/s): ");
+					} while (input != L"r" && input != L"s" && input != L"");
 
-					if (input == L"r") {
+					if (input == L"r" || input == L"") {
 						input = L"Ø";
 					}
 					else {
 						input = L"S";
-					}
 
+					}
 					sheet->writeStr(i, 6, input.c_str());
+
+					do {
+						input = inputwstrparms(L"Zadejte cíl cesty/site ID ((r)ozvadov, (o)strava, (b)ohumín, (g)örlitz, (s)klad, (b)yt): ");
+					} while (input != L"r" && input != L"o" && input != L"b" && input != L"g" && input != L"s" && input != L"b" && input != L"");
+
+					if (input == L"r") {
+						activity += L"Rozvadov";
+					}
+					else if (input == L"o") {
+						activity += L"Ostrava";
+					}
+					else if (input == L"b" || input == L"") {
+						activity += L"Bohumín";
+					}
+					else if (input == L"g") {
+						activity += L"Görlitz";
+					}
+					else if (input == L"s") {
+						activity += L"Sklad";
+					}
+					else {
+						activity += input;
+					}
 
 				}
 				else if (input == L"s") {
-					activity = L"Swap ";
-					target = true;
+					activity = L"Swap";
 				}
 				else if (input == L"p") {
-					activity = L"Pøíprava ";
+					activity = L"Pøíprava";
 				}
 				else if (input == L"z") {
-					activity = L"Zaèištìní ";
+					activity = L"Zaèištìní";
 				}
 				else if (input == L"u") {
-					activity = L"Survey ";
+					activity = L"Survey";
 				}
 				else if (input == L"t") {
-					activity = L"Tickets ";
+					activity = L"Tickets";
 				}
 				else if (input == L"d") {
 					activity == L"Dokumentace";
@@ -588,19 +620,19 @@ void create_xls::fill_data(unsigned short next) {
 					activity == L"Administrativa";
 				}
 
-				if (target) {
-					do {
-						input = inputwstrparms(L"Zadejte cíl cesty/site: ");
-					} while (input == L"");
-					activity += input;
-					sheet->writeStr(i, 7, activity.c_str());
-				}
+				sheet->writeStr(i, 7, activity.c_str());
+
 				do {
-					input = inputwstrparms(L"Chcete další záznam do tohoto dne? (a/n): ");
-				} while (input != L"a" && input != L"n");
+					input = inputwstrparms(L"Chcete další záznam do tohoto dne? (A/n): ");
+				} while (input != L"a" && input != L"n" && input != L"");
 
 				if (input == L"n") {
-					i = 22 + next;
+					input = L"=SUMA(D" + std::to_wstring(start + 1) + L":D" + std::to_wstring(21 + next)+ L")";
+
+					sheet->writeFormula(21 + next, 3, input.c_str());
+					
+					i = 21 + next;
+
 				}
 			}
 		}
@@ -608,7 +640,9 @@ void create_xls::fill_data(unsigned short next) {
 }
 
 std::wstring create_xls::convert_time(unsigned int time) {
+	
 	std::wstring string_time{ std::to_wstring(time) };
+	
 	if (string_time.size() == 4) {
 		string_time.insert(2, L":");
 	}
@@ -616,7 +650,11 @@ std::wstring create_xls::convert_time(unsigned int time) {
 		string_time.insert(1, L":");
 	}
 	else if (string_time.size() == 2) {
-		string_time.insert(1, L"0:");
+		string_time.insert(0, L"0:");
 	}
+	else if (string_time.size() == 1) {
+		string_time.insert(0, L"0:0");
+	}
+
 	return string_time;
 }
