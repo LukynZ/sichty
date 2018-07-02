@@ -1,5 +1,11 @@
 using namespace std;
 
+bool entry();
+void start();
+void continuing();
+int inputparms(wstring);
+wstring inputwstrparms(wstring);
+
 bool entry() {
 	wstring answer;
 	
