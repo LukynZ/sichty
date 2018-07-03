@@ -575,15 +575,15 @@ void create_xls::fill_data(unsigned short next) {
 						}
 
 						if (num_input_from < 700 && num_input_to <= 700) {
-								pause_time += num_input_to - num_input_from;
+							pause_time += num_input_to - num_input_from;
 						}
 
 						if (num_input_to > 1530 && num_input_from <= 1530) {
-								pause_time += num_input_to - 1530;
+							pause_time += num_input_to - 1530;
 						}
 
 						if (num_input_to > 1530 && num_input_from > 1530) {
-								pause_time += num_input_to - num_input_from;
+							pause_time += num_input_to - num_input_from;
 						}
 					}
 
