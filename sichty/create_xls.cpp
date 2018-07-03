@@ -479,6 +479,7 @@ void create_xls::fill_data(unsigned short next) {
 	unsigned int num_input_from;
 	unsigned int num_input_to{ 700 };
 	unsigned int pause_time{ 0 };
+	unsigned int total_time{ 0 };
 	unsigned short start;
 	std::wstring input;
 	std::wstring spz;
@@ -523,6 +524,8 @@ void create_xls::fill_data(unsigned short next) {
 
 				input = L"=C" + std::to_wstring(i+1) + L"-B" + std::to_wstring(i+1);
 				sheet->writeFormula(i, 3, input.c_str());
+
+				total_time += num_input_to - num_input_from;
 
 				break;
 
@@ -615,15 +618,6 @@ void create_xls::fill_data(unsigned short next) {
 					// writing if driver or co-driver
 					sheet->writeStr(i, 6, input.c_str());
 					
-					// pause time count fix
-					if (pause_time % 100 >= 60) {
-						pause_time -= 40;
-					}
-
-					// writing pause time
-					input = this->convert_time(pause_time);
-					sheet->writeStr(22 + next, 3, input.c_str());
-
 					// setting waypoint
 					input = inputwstrparms(L"Zadejte cíl cesty/site ID ((r)ozvadov, (o)strava, bo(h)umín, (g)örlitz, (s)klad, (B)yt): ");
 					
@@ -686,6 +680,26 @@ void create_xls::fill_data(unsigned short next) {
 					// sum of all hours
 					input = L"SUM(D" + std::to_wstring(start + 1) + L":D" + std::to_wstring(21 + next)+ L")";
 					sheet->writeFormula(21 + next, 3, input.c_str());
+
+					// pause time count fix
+					if (pause_time % 100 >= 60) {
+						pause_time -= 40;
+					}
+					
+					// must-have pause by law if pause not met
+					if (total_time > 1800 && pause_time < 130) {
+						pause_time = 130;
+					}
+					else if(total_time > 1200 && pause_time < 100) {
+						pause_time = 100;
+					}
+					else if (total_time > 600 && pause_time < 30) {
+						pause_time = 30;
+					}
+
+					// writing pause time
+					input = this->convert_time(pause_time);
+					sheet->writeStr(22 + next, 3, input.c_str());
 
 					// all hours - pause time
 					input = L"=D" + std::to_wstring(22 + next) + L"-D" + std::to_wstring(23 + next);
