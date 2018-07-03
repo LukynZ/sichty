@@ -23,6 +23,7 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 		pages = 14;
 	}
 
+	// name of created file
 	std::wstring file { name + L" - výkaz práce " + months_name.at(month - 1) + L" " + std::to_wstring(year) + L".xls" };
 
 	book = xlCreateBook();
@@ -32,6 +33,7 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 		unsigned short next{ 24 };
 		bool fill_next = true;
 
+		// creating layout and name of pages
 		for (unsigned short i{ 1 }; i <= ((2 * pages) + add); i = (i + 2)) {
 
 			if (i == (2 * pages) + add) {
@@ -48,6 +50,7 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 			this->set_formating(next);
 			this->fill_main_text(next, name, i, month, year);
 
+			// create timesheet for another day?
 			for (unsigned short x{ i }, y{ 0 }; x <= (i + 1) && x <= ((2 * pages) + add) && fill_next == true; x++, y += 24) {
 				do {
 					answer = inputwstrparms(L"Chcete pøidat záznam pro: " + std::to_wstring(x) + L"." + date_m_y + L"? (A/n/nv) *nv = ne vse: ");
@@ -63,6 +66,7 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 			}
 		}
 
+		// saving file
 		if (book->save(file.c_str())) {
 			std::wcout << L"Byl vytvoøen excel soubor: " + file << std::endl;
 			std::wcout << L"Najdete ho v adresáøi programu. \a" << std::endl;
@@ -77,6 +81,7 @@ create_xls::~create_xls() {
 	book->release();
 }
 
+// main formatting of cells, rows and cols
 void create_xls::set_formating(unsigned short next) {
 
 	// rows / cols
@@ -307,11 +312,13 @@ void create_xls::set_formating(unsigned short next) {
 
 }
 
+// setting align of cells
 void create_xls::align(AlignH styleH, AlignV styleV, Format * format) {
 	format->setAlignH(styleH);
 	format->setAlignV(styleV);
 }
 
+// setting borders of cells
 void create_xls::border(BorderStyle styleT, BorderStyle styleB, BorderStyle styleL, BorderStyle styleR, Format * format) {
 	format->setBorderTop(styleT);
 	format->setBorderBottom(styleB);
@@ -319,11 +326,13 @@ void create_xls::border(BorderStyle styleT, BorderStyle styleB, BorderStyle styl
 	format->setBorderRight(styleR);
 }
 
+// setting format of cells
 void create_xls::setformat(unsigned short row, unsigned short col, Format * format, unsigned short next) {
 	sheet->setCellFormat(row, col, format);
 	sheet->setCellFormat(row + next, col, format);
 }
 
+// setting base font
 void create_xls::basefont(Format * format) {
 	Font * font = book->addFont();
 	font->setName(L"Calibri");
@@ -331,6 +340,7 @@ void create_xls::basefont(Format * format) {
 	format->setFont(font);
 }
 
+// setting font for input data
 void create_xls::datafont(Format * format) {
 	Font * font = book->addFont();
 	font->setName(L"Calibri");
@@ -338,12 +348,14 @@ void create_xls::datafont(Format * format) {
 	format->setFont(font);
 }
 
+// setting bold font
 void create_xls::boldfont(Format * format) {
 	Font * font = book->addFont();
 	font->setBold(true);
 	format->setFont(font);
 }
 
+// setting sheet layout
 void create_xls::layout(unsigned short next) {
 	sheet->setDisplayGridlines(true);
 
@@ -429,6 +441,7 @@ void create_xls::layout(unsigned short next) {
 	}
 }
 
+// writing main text to sheet
 void create_xls::fill_main_text(unsigned short next, std::wstring name, unsigned short day, unsigned short month, unsigned int year) {
 
 	for (unsigned short x{ 0 }; x <= next; x += 24, day++) {
@@ -460,6 +473,7 @@ void create_xls::fill_main_text(unsigned short next, std::wstring name, unsigned
 
 }
 
+// writing user input data to sheet
 void create_xls::fill_data(unsigned short next) {
 
 	unsigned int num_input_from;
@@ -484,6 +498,7 @@ void create_xls::fill_data(unsigned short next) {
 
 			switch (x) {
 
+			// writing time from
 			case 1:
 				do {
 					num_input_from = inputparms(L"Zadejte èas OD (default " + std::to_wstring(num_input_to) + L"): ");
@@ -497,6 +512,7 @@ void create_xls::fill_data(unsigned short next) {
 				sheet->writeStr(i, 1, input.c_str());
 				break;
 
+			// writing time to
 			case 2:
 				do {
 					num_input_to = inputparms(L"Zadejte èas DO: ");
@@ -510,6 +526,7 @@ void create_xls::fill_data(unsigned short next) {
 
 				break;
 
+			// writing country code
 			case 3:
 				do {
 					input = inputwstrparms(L"Zemì D/CZ/PL/A? (D/c/p/a): ");
@@ -531,18 +548,23 @@ void create_xls::fill_data(unsigned short next) {
 				sheet->writeStr(i, 4, input.c_str());
 				break;
 
+			// checking of activity type + SPZ handling + counting of pause time + if route => setting route destination
 			case 4:
 				do {
 					input = inputwstrparms(L"Èinnost? (C)esta, (s)wap, (p)øíprava, (z)aèištìní, s(u)rwey, (t)ickets, (d)okumentace, (a)dministrativa: ");
 				} while (input != L"c" && input != L"s" && input != L"p" && input != L"z" && input != L"u" && input != L"t" && input != L"d" && input != L"a" && input != L"");
 
+				// if route
 				if (input == L"c" || input == L"") {
 					activity = L"-> ";
+
+					// if SPZ has been already set before -> else?
 					if (spz != L"") {
 						do {
 							input = inputwstrparms(L"SPZ vozidla je " + spz + L"? (A/n) ");
 						} while (input != L"a" && input != L"n" && input != L"");
 
+						// if old one is valid -> else
 						if (input == L"a" || input == L"") {
 							sheet->writeStr(i, 5, spz.c_str());
 						}
@@ -560,16 +582,19 @@ void create_xls::fill_data(unsigned short next) {
 						sheet->writeStr(i, 5, spz.c_str());
 					}
 
+					// driver?
 					do {
 						input = inputwstrparms(L"Øidiè nebo spolujezdec? (R/s): ");
 					} while (input != L"r" && input != L"s" && input != L"");
 
+					// if driver -> else
 					if (input == L"r" || input == L"") {
 						input = L"Ø";
 					}
 					else {
 						input = L"S";
 
+						// not a driver -> counting pause time
 						if (num_input_from < 700 && num_input_to > 700) {
 							pause_time += 700 - num_input_from;
 						}
@@ -587,15 +612,19 @@ void create_xls::fill_data(unsigned short next) {
 						}
 					}
 
+					// writing if driver or co-driver
 					sheet->writeStr(i, 6, input.c_str());
 					
+					// pause time count fix
 					if (pause_time % 100 >= 60) {
 						pause_time -= 40;
 					}
 
+					// writing pause time
 					input = this->convert_time(pause_time);
 					sheet->writeStr(22 + next, 3, input.c_str());
 
+					// setting waypoint
 					input = inputwstrparms(L"Zadejte cíl cesty/site ID ((r)ozvadov, (o)strava, bo(h)umín, (g)örlitz, (s)klad, (B)yt): ");
 					
 					if (input == L"r") {
@@ -643,17 +672,22 @@ void create_xls::fill_data(unsigned short next) {
 					activity == L"Administrativa";
 				}
 
+				// writing activity
 				sheet->writeStr(i, 7, activity.c_str());
 
+				// do we want another record for this day?
 				do {
 					input = inputwstrparms(L"Chcete další záznam do tohoto dne? (A/n): ");
 				} while (input != L"a" && input != L"n" && input != L"");
 
+				// if not...
 				if (input == L"n") {
 					
+					// sum of all hours
 					input = L"SUM(D" + std::to_wstring(start + 1) + L":D" + std::to_wstring(21 + next)+ L")";
 					sheet->writeFormula(21 + next, 3, input.c_str());
 
+					// all hours - pause time
 					input = L"=D" + std::to_wstring(22 + next) + L"-D" + std::to_wstring(23 + next);
 					sheet->writeFormula(23 + next, 3, input.c_str());
 					i = 21 + next;
@@ -663,6 +697,7 @@ void create_xls::fill_data(unsigned short next) {
 	}
 }
 
+// convert time int (1540) to hours string (15:40)
 std::wstring create_xls::convert_time(unsigned int time) {
 	
 	std::wstring string_time{ std::to_wstring(time) };
