@@ -50,14 +50,16 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 			this->set_formating(next);
 			this->fill_main_text(next, name, i, month, year);
 
-			// create timesheet for another day?
+			std::wstring spz{ L"" };
+
+			// create timesheet for day?
 			for (unsigned short x{ i }, y{ 0 }; x <= (i + 1) && x <= ((2 * pages) + add) && fill_next == true; x++, y += 24) {
 				do {
 					answer = inputwstrparms(L"Chcete pøidat záznam pro: " + std::to_wstring(x) + L"." + date_m_y + L"? (A/n/nv) *nv = ne vse: ");
 				} while (answer != L"a" && answer != L"n" && answer != L"nv" && answer != L"");
 
 				if (answer == L"a" || answer == L"") {
-					this->fill_data(y);
+					spz = this->fill_data(y,spz);
 				}
 				else if (answer == L"nv") {
 					fill_next = false;
@@ -474,15 +476,14 @@ void create_xls::fill_main_text(unsigned short next, std::wstring name, unsigned
 }
 
 // writing user input data to sheet
-void create_xls::fill_data(unsigned short next) {
+std::wstring create_xls::fill_data(unsigned short next, std::wstring spz) {
 
 	unsigned int num_input_from;
-	unsigned int num_input_to{ 700 };
+	unsigned int num_input_to{ 0 };
 	unsigned int pause_time{ 0 };
 	unsigned int total_time{ 0 };
 	unsigned short start;
 	std::wstring input;
-	std::wstring spz;
 	std::wstring country{ L"D" };
 	std::wstring activity;
 	bool target;
@@ -503,7 +504,7 @@ void create_xls::fill_data(unsigned short next) {
 			case 1:
 				do {
 					num_input_from = inputparms(L"Zadejte èas OD (default " + std::to_wstring(num_input_to) + L"): ");
-				} while ((num_input_from < 0 || num_input_from > 2400) && num_input_from != NULL);
+				} while ((num_input_from < 0 || num_input_from > 2400 || num_input_from < num_input_to) && num_input_from != NULL);
 
 				if (num_input_from == NULL) {
 					num_input_from = num_input_to;
@@ -554,8 +555,8 @@ void create_xls::fill_data(unsigned short next) {
 			// checking of activity type + SPZ handling + counting of pause time + if route => setting route destination
 			case 4:
 				do {
-					input = inputwstrparms(L"Èinnost? (C)esta, (s)wap, (p)øíprava, (z)aèištìní, s(u)rwey, (t)ickets, (d)okumentace, (a)dministrativa: ");
-				} while (input != L"c" && input != L"s" && input != L"p" && input != L"z" && input != L"u" && input != L"t" && input != L"d" && input != L"a" && input != L"");
+					input = inputwstrparms(L"Èinnost? (C)esta, (s)wap, (p)øíprava, (z)aèištìní, (m)ateriál, s(u)rwey, (t)ickets, (d)okumentace, (a)dministrativa: ");
+				} while (input != L"c" && input != L"s" && input != L"p" && input != L"z" && input != L"m" && input != L"u" && input != L"t" && input != L"d" && input != L"a" && input != L"");
 
 				// if route
 				if (input == L"c" || input == L"") {
@@ -653,6 +654,9 @@ void create_xls::fill_data(unsigned short next) {
 				else if (input == L"z") {
 					activity = L"Zaèištìní";
 				}
+				else if (input == L"m") {
+					activity = L"Materiál";
+				}
 				else if (input == L"u") {
 					activity = L"Survey";
 				}
@@ -709,6 +713,8 @@ void create_xls::fill_data(unsigned short next) {
 			}
 		}
 	}
+
+	return spz;
 }
 
 // convert time int (1540) to hours string (15:40)
