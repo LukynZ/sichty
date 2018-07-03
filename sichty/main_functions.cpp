@@ -9,7 +9,7 @@ using namespace std;
 
 bool entry() {
 	wstring answer;
-	
+
 	do {
 		answer = inputwstrparms(L"Chcete vytvoøit tabulku pro nový mìsíc? (A/n): ");
 	} while (answer != L"a" && answer != L"n" && answer != L"");

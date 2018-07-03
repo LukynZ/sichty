@@ -464,7 +464,7 @@ void create_xls::fill_data(unsigned short next) {
 
 	unsigned int num_input_from;
 	unsigned int num_input_to{ 700 };
-	unsigned int pause_time;
+	unsigned int pause_time{ 0 };
 	unsigned short start;
 	std::wstring input;
 	std::wstring spz;
@@ -479,7 +479,6 @@ void create_xls::fill_data(unsigned short next) {
 	for (unsigned short i{ start }; i <= (20 + next); i++) {
 
 		target = false;
-		pause_time = 0;
 
 		for (unsigned short x{ 1 }; x <= 4; x++) {
 
@@ -488,7 +487,7 @@ void create_xls::fill_data(unsigned short next) {
 			case 1:
 				do {
 					num_input_from = inputparms(L"Zadejte èas OD (default " + std::to_wstring(num_input_to) + L"): ");
-				} while ((num_input_from < 0 || num_input_from > 2400) || num_input_from != NULL);
+				} while ((num_input_from < 0 || num_input_from > 2400) && num_input_from != NULL);
 
 				if (num_input_from == NULL) {
 					num_input_from = num_input_to;
@@ -571,20 +570,41 @@ void create_xls::fill_data(unsigned short next) {
 					else {
 						input = L"S";
 
+						if (num_input_from < 700 && num_input_to > 700) {
+							pause_time += 700 - num_input_from;
+						}
+
+						if (num_input_from < 700 && num_input_to <= 700) {
+								pause_time += num_input_to - num_input_from;
+						}
+
+						if (num_input_to > 1530 && num_input_from <= 1530) {
+								pause_time += num_input_to - 1530;
+						}
+
+						if (num_input_to > 1530 && num_input_from > 1530) {
+								pause_time += num_input_to - num_input_from;
+						}
 					}
+
 					sheet->writeStr(i, 6, input.c_str());
+					
+					if (pause_time % 100 >= 60) {
+						pause_time -= 40;
+					}
 
-					do {
-						input = inputwstrparms(L"Zadejte cíl cesty/site ID ((r)ozvadov, (o)strava, (b)ohumín, (g)örlitz, (s)klad, (b)yt): ");
-					} while (input != L"r" && input != L"o" && input != L"b" && input != L"g" && input != L"s" && input != L"b" && input != L"");
+					input = this->convert_time(pause_time);
+					sheet->writeStr(22 + next, 3, input.c_str());
 
+					input = inputwstrparms(L"Zadejte cíl cesty/site ID ((r)ozvadov, (o)strava, bo(h)umín, (g)örlitz, (s)klad, (B)yt): ");
+					
 					if (input == L"r") {
 						activity += L"Rozvadov";
 					}
 					else if (input == L"o") {
 						activity += L"Ostrava";
 					}
-					else if (input == L"b" || input == L"") {
+					else if (input == L"b") {
 						activity += L"Bohumín";
 					}
 					else if (input == L"g") {
@@ -592,6 +612,9 @@ void create_xls::fill_data(unsigned short next) {
 					}
 					else if (input == L"s") {
 						activity += L"Sklad";
+					}
+					else if (input == L"b" || input == L"") {
+						activity += L"Byt";
 					}
 					else {
 						activity += input;
@@ -627,12 +650,13 @@ void create_xls::fill_data(unsigned short next) {
 				} while (input != L"a" && input != L"n" && input != L"");
 
 				if (input == L"n") {
-					input = L"=SUMA(D" + std::to_wstring(start + 1) + L":D" + std::to_wstring(21 + next)+ L")";
-
-					sheet->writeFormula(21 + next, 3, input.c_str());
 					
-					i = 21 + next;
+					input = L"SUM(D" + std::to_wstring(start + 1) + L":D" + std::to_wstring(21 + next)+ L")";
+					sheet->writeFormula(21 + next, 3, input.c_str());
 
+					input = L"=D" + std::to_wstring(22 + next) + L"-D" + std::to_wstring(23 + next);
+					sheet->writeFormula(23 + next, 3, input.c_str());
+					i = 21 + next;
 				}
 			}
 		}
