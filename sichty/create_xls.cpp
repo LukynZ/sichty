@@ -34,7 +34,7 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 		bool fill_next = true;
 
 		// creating layout and name of pages
-		for (unsigned short i{ 1 }; i <= ((2 * pages) + add); i = (i + 2)) {
+		for (unsigned short i{ 1 }; i <= ((2 * pages) + add); i += 2) {
 
 			if (i == (2 * pages) + add) {
 				page = std::to_wstring(i);
@@ -53,7 +53,7 @@ create_xls::create_xls(short month, int year, std::wstring name) {
 			std::wstring spz{ L"" };
 
 			// create timesheet for day?
-			for (unsigned short x{ i }, y{ 0 }; x <= (i + 1) && x <= ((2 * pages) + add) && fill_next == true; x++, y += 24) {
+			for (unsigned short x{ i }, y{ 0 }; x <= (i + 1) && x <= ((2 * pages) + add) && fill_next == true; ++x, y += 24) {
 				do {
 					answer = inputwstrparms(L"Chcete pøidat záznam pro: " + std::to_wstring(x) + L"." + date_m_y + L"? (A/n/nv) *nv = ne vse: ");
 				} while (answer != L"a" && answer != L"n" && answer != L"nv" && answer != L"");
@@ -96,8 +96,8 @@ void create_xls::set_formating(unsigned short next) {
 		format->setBorder(BORDERSTYLE_MEDIUM);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 21 }; i <= 23; i++) {
-				for (unsigned short y{ 0 }; y <= 9; y++) {
+			for (unsigned short i{ 21 }; i <= 23; ++i) {
+				for (unsigned short y{ 0 }; y <= 9; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -113,7 +113,7 @@ void create_xls::set_formating(unsigned short next) {
 		format->setRotation(90);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 7 }; i <= 20; i++) {
+			for (unsigned short i{ 7 }; i <= 20; ++i) {
 				sheet->setCellFormat(i + x, 0, format);
 			}
 		}
@@ -128,8 +128,8 @@ void create_xls::set_formating(unsigned short next) {
 		format->setNumFormat(NUMFORMAT_CUSTOM_HMM);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 7 }; i <= 20; i++) {
-				for (unsigned short y{ 1 }; y <= 3; y++) {
+			for (unsigned short i{ 7 }; i <= 20; ++i) {
+				for (unsigned short y{ 1 }; y <= 3; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -144,8 +144,8 @@ void create_xls::set_formating(unsigned short next) {
 		format->setBorder(BORDERSTYLE_THIN);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 7 }; i <= 20; i++) {
-				for (unsigned short y{ 4 }; y <= 6; y++) {
+			for (unsigned short i{ 7 }; i <= 20; ++i) {
+				for (unsigned short y{ 4 }; y <= 6; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -160,8 +160,8 @@ void create_xls::set_formating(unsigned short next) {
 		this->datafont(format);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 7 }; i <= 20; i++) {
-				for (unsigned short y{ 7 }; y <= 9; y++) {
+			for (unsigned short i{ 7 }; i <= 20; ++i) {
+				for (unsigned short y{ 7 }; y <= 9; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -176,8 +176,8 @@ void create_xls::set_formating(unsigned short next) {
 		this->basefont(format);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 5 }; i <= 6; i++) {
-				for (unsigned short y{ 3 }; y <= 8; y++) {
+			for (unsigned short i{ 5 }; i <= 6; ++i) {
+				for (unsigned short y{ 3 }; y <= 8; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -233,8 +233,8 @@ void create_xls::set_formating(unsigned short next) {
 		format->setBorder(BORDERSTYLE_MEDIUM);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 1 }; i <= 4; i++) {
-				for (unsigned short y{ 0 }; y <= 1; y++) {
+			for (unsigned short i{ 1 }; i <= 4; ++i) {
+				for (unsigned short y{ 0 }; y <= 1; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -249,8 +249,8 @@ void create_xls::set_formating(unsigned short next) {
 		format->setBorder(BORDERSTYLE_MEDIUM);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 1 }; i <= 4; i++) {
-				for (unsigned short y{ 2 }; y <= 9; y++) {
+			for (unsigned short i{ 1 }; i <= 4; ++i) {
+				for (unsigned short y{ 2 }; y <= 9; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -265,7 +265,7 @@ void create_xls::set_formating(unsigned short next) {
 		format->setBorder(BORDERSTYLE_MEDIUM);	
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 21 }; i <= 23; i++) {
+			for (unsigned short i{ 21 }; i <= 23; ++i) {
 				sheet->setCellFormat(i + x, 0, format);
 			}
 		}
@@ -279,8 +279,8 @@ void create_xls::set_formating(unsigned short next) {
 		format->setBorder(BORDERSTYLE_MEDIUM);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 21 }; i <= 22; i++) {
-				for (unsigned short y{ 4 }; y <= 6; y++) {
+			for (unsigned short i{ 21 }; i <= 22; ++i) {
+				for (unsigned short y{ 4 }; y <= 6; ++y) {
 					sheet->setCellFormat(i + x, y, format);
 				}
 			}
@@ -290,13 +290,13 @@ void create_xls::set_formating(unsigned short next) {
 	// 21-23 / D
 	{
 		Format* format = book->addFormat();
-		this->align(ALIGNH_LEFT, ALIGNV_CENTER, format);
+		this->align(ALIGNH_CENTER, ALIGNV_CENTER, format);
 		this->basefont(format);
 		format->setBorder(BORDERSTYLE_MEDIUM);
 		format->setNumFormat(NUMFORMAT_CUSTOM_HMM);
 
 		for (unsigned short x{ 0 }; x <= next; x += 24) {
-			for (unsigned short i{ 21 }; i <= 23; i++) {
+			for (unsigned short i{ 21 }; i <= 23; ++i) {
 				sheet->setCellFormat(i + x, 3, format);
 			}
 		}
@@ -364,13 +364,13 @@ void create_xls::layout(unsigned short next) {
 	std::array<double,10> width { 10.71, 6, 5.57, 6.57, 4, 7.71, 4.29, 8.57, 8.57, 28.71 };
 
 	// setting columns width - cols A-J
-	for (unsigned short i{ 0 }; i < width.size(); i++) {
+	for (unsigned short i{ 0 }; i < width.size(); ++i) {
 		sheet->setCol(i, i, width.at(i));
 	}
 
 	// setting row height - rows 1-4 + bottom
 	for (unsigned short x{ 0 }; x <= next; x += 24) {
-		for (unsigned short i{ 0 }; i <= 4; i++) {
+		for (unsigned short i{ 0 }; i <= 4; ++i) {
 			sheet->setRow(i+x, 15);
 		}
 	}
@@ -385,7 +385,7 @@ void create_xls::layout(unsigned short next) {
 
 	// setting row height - rows 7-23 + bottom
 	for (unsigned short x{ 0 }; x <= next; x += 24) {
-		for (unsigned short i{ 7 }; i <= 23; i++) {
+		for (unsigned short i{ 7 }; i <= 23; ++i) {
 			sheet->setRow(i+x, 18);
 		}
 	}
@@ -397,7 +397,7 @@ void create_xls::layout(unsigned short next) {
 		sheet->setMerge(1 + x, 3 + x, 7, 9);
 
 		// merging 1,2,3,4 + A-B | 1,2,3,4 + C-G
-		for (unsigned short i{ 1 }; i <= 4; i++) {
+		for (unsigned short i{ 1 }; i <= 4; ++i) {
 			sheet->setMerge(i + x, i + x, 0, 1);
 			sheet->setMerge(i + x, i + x, 2, 6);
 		}
@@ -409,7 +409,7 @@ void create_xls::layout(unsigned short next) {
 		sheet->setMerge(5 + x, 5 + x, 1, 2);
 
 		//merging 5-6 + D,E,F,G
-		for (unsigned short i{ 3 }; i <= 6; i++) {
+		for (unsigned short i{ 3 }; i <= 6; ++i) {
 			sheet->setMerge(5 + x, 6 + x, i, i);
 		}
 
@@ -423,12 +423,12 @@ void create_xls::layout(unsigned short next) {
 		sheet->setMerge(7 + x, 20 + x, 0, 0);
 
 		//merging 7-20 + H-J
-		for (unsigned short i{ 7 }; i <= 20; i++) {
+		for (unsigned short i{ 7 }; i <= 20; ++i) {
 				sheet->setMerge(i + x, i + x, 7, 9);
 		}
 
 		//merging 21,22,23 + A-C | 21,22 + F-G | 21,22 + H-J | 23 + E-J
-		for (unsigned short i{ 21 }; i <= 23; i++) {
+		for (unsigned short i{ 21 }; i <= 23; ++i) {
 
 			sheet->setMerge(i + x, i + x, 0, 2);
 
@@ -446,7 +446,7 @@ void create_xls::layout(unsigned short next) {
 // writing main text to sheet
 void create_xls::fill_main_text(unsigned short next, std::wstring name, unsigned short day, unsigned short month, unsigned int year) {
 
-	for (unsigned short x{ 0 }; x <= next; x += 24, day++) {
+	for (unsigned short x{ 0 }; x <= next; x += 24, ++day) {
 		std::wstring sheetdate{ L"  " + std::to_wstring(day) + L"." + std::to_wstring(month) + L"." + std::to_wstring(year) };
 
 		sheet->writeStr(1 + x, 0, L"  Jméno a pøíjmení:  ");
@@ -492,11 +492,11 @@ std::wstring create_xls::fill_data(unsigned short next, std::wstring spz) {
 
 	std::wcout << L"Zadávejte èasové ùdaje bez dvojteèky!" << std::endl;
 
-	for (unsigned short i{ start }; i <= (20 + next); i++) {
+	for (unsigned short i{ start }; i <= (20 + next); ++i) {
 
 		target = false;
 
-		for (unsigned short x{ 1 }; x <= 4; x++) {
+		for (unsigned short x{ 1 }; x <= 4; ++x) {
 
 			switch (x) {
 
@@ -554,10 +554,8 @@ std::wstring create_xls::fill_data(unsigned short next, std::wstring spz) {
 
 			// checking of activity type + SPZ handling + counting of pause time + if route => setting route destination
 			case 4:
-				do {
-					input = inputwstrparms(L"Èinnost? (C)esta, (s)wap, (p)øíprava, (z)aèištìní, (m)ateriál, s(u)rwey, (t)ickets, (d)okumentace, (a)dministrativa: ");
-				} while (input != L"c" && input != L"s" && input != L"p" && input != L"z" && input != L"m" && input != L"u" && input != L"t" && input != L"d" && input != L"a" && input != L"");
-
+				input = inputwstrparms(L"Èinnost? (C)esta, (s)wap, (p)øíprava, (z)aèištìní, (m)ateriál, s(u)rwey, (t)ickets, (d)okumentace, (a)dministrativa: ");
+				
 				// if route
 				if (input == L"c" || input == L"") {
 					activity = L"-> ";
@@ -628,7 +626,7 @@ std::wstring create_xls::fill_data(unsigned short next, std::wstring spz) {
 					else if (input == L"o") {
 						activity += L"Ostrava";
 					}
-					else if (input == L"b") {
+					else if (input == L"h") {
 						activity += L"Bohumín";
 					}
 					else if (input == L"g") {
