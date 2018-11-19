@@ -662,10 +662,10 @@ std::wstring create_xls::fill_data(unsigned short next, std::wstring spz) {
 					activity = L"Tickets";
 				}
 				else if (input == L"d") {
-					activity == L"Dokumentace";
+					activity = L"Dokumentace";
 				}
 				else if (input == L"a") {
-					activity == L"Administrativa";
+					activity = L"Administrativa";
 				}
 
 				// writing activity
